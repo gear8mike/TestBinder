@@ -1,2 +1,2 @@
-FROM docker pull fedora:33
+FROM fedora:33
 
