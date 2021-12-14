@@ -1,3 +1,2 @@
-FROM docker.km3net.de/common/aanet:latest
+FROM docker pull fedora:33
 
-MAINTAINER vkulikovskiy@km3net.de
