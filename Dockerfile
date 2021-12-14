@@ -1,6 +1,7 @@
-FROM fedora:33
+FROM debian:stable-slim
 
-RUN dnf install python -y 
+RUN apt-get install yum
+RUN yum install python -y 
 
 #RUN pip install numpy matplotlib
 
