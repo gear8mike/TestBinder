@@ -1,7 +1,8 @@
 FROM debian:stable-slim
 
-RUN apt-get install yum
-RUN yum install python -y 
+RUN apt-get update
+RUN apt-get install dnf
+RUN dnf install python -y 
 
 #RUN pip install numpy matplotlib
 
