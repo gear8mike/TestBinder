@@ -8,9 +8,7 @@ RUN apt-get install python3 pip -y
 
 #RUN pip install jupyter notebook
 
-#RUN pip install markdown-kernel
-RUN pip install --no-cache --upgrade pip && \
-    pip install --no-cache notebook jupyterlab
+
 
 ARG NB_USER=msmirnov
 ARG NB_UID=1000
@@ -28,3 +26,7 @@ COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
+#all pip install packages
+RUN pip install --no-cache --upgrade pip && \
+    pip install --no-cache notebook jupyterlab
+RUN pip install markdown-kernel
