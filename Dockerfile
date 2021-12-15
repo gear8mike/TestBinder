@@ -10,8 +10,8 @@ RUN apt-get install python3 pip -y
 
 
 
-ARG NB_USER = 'msmirnov'
-ARG NB_UID =1000
+ARG NB_USER = msmirnov
+ARG NB_UID = 1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
