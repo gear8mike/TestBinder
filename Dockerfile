@@ -4,6 +4,9 @@ RUN apt-get update
 #RUN apt-get install dnf -y
 RUN apt-get install python3 pip -y 
 
+RUN pip install --no-cache --upgrade pip && \
+    pip install --no-cache notebook jupyterlab
+
 #RUN pip install numpy matplotlib
 
 #RUN pip install jupyter notebook
@@ -16,7 +19,8 @@ ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
 RUN adduser --disabled-password \
-    --gecos "Default user" \
+    #--gecos "Default user" \
+    --gecos "msmirnov" \
     --uid ${NB_UID} \
     ${NB_USER}
 WORKDIR ${HOME}
@@ -27,6 +31,5 @@ USER ${USER}
 #RUN chown -R ${NB_UID} ${HOME}
 #USER ${NB_USER}
 #all pip install packages
-RUN pip install --no-cache --upgrade pip && \
-    pip install --no-cache notebook jupyterlab
+
 #RUN pip install markdown-kernel
