@@ -1,7 +1,7 @@
 FROM debian:stable-slim
 
 RUN apt-get update
-RUN apt-get install dnf
+RUN apt-get install dnf -y
 RUN dnf install python -y 
 
 #RUN pip install numpy matplotlib
