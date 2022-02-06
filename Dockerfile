@@ -1,53 +1,61 @@
-#beginig of base image ------------------------------------------------
-FROM centos:7.4.1708
+FROM ubuntu:latest
 
-RUN yum install -y ant bison flex-devel gcc gcc-c++ gcc-gfortran gdb make cmake glibc-static strace && yum clean -y all
-RUN yum install -y autoconf perl-CPAN gettext-devel perl-devel openssl-devel libuuid-devel libcurl-devel expat-devel wget lftp && yum clean -y all
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN export VER="2.25.1" && \
-     wget https://github.com/git/git/archive/v${VER}.tar.gz && \
-     tar -xvf v${VER}.tar.gz && \
-     rm -f v${VER}.tar.gz && \
-     cd git-* && \
-     make configure && \
-     ./configure --prefix=/usr/local && \
-     make -j install && \
-     cd .. && \
-     rm -rf git-*
+#SHELL [ "/bin/bash","-c" ]
+#set bash as a default shell
+ENV SHELL /bin/bash
+RUN apt-get update -y && \
+    apt-get install wget python3-pip git -y 
 
-RUN yum install -y subversion && yum clean -y all
-RUN yum install -y doxygen && yum clean -y all
-RUN yum install -y ca-certificates && yum clean -y all
-
-#end of base image ------------------------------------------------------
-
-RUN yum install -y python3-pip.noarch
-
-RUN pip3 install --no-cache --upgrade pip && \
-    pip install --no-cache notebook jupyterlab
-#RUN pip install numpy matplotlib
-
-#RUN pip install jupyter notebook
-
-
-
-ARG NB_USER='msmirnov'
-ARG NB_UID=90
+#settings for Mybinder
+ARG NB_USER=your_user
+ARG NB_UID=1000
 ENV USER ${NB_USER}
+ENV NB_UID ${NB_UID}
 ENV HOME /home/${NB_USER}
 
-RUN adduser --password "" \
-    --comment "Default  User" \
+RUN adduser --disabled-password \
+    --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
-WORKDIR ${HOME}
-USER ${USER}
-# Make sure the contents of our repo are in ${HOME}
+
+#maybe copy is not necessary
 COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
+ENV PATH=$PATH:${HOME}/.local/bin
+
+#RUN pip3 install --no-cache --upgrade pip && \
+#    pip install --no-cache notebook jupyterlab
+
+#ROOT required packages
+RUN apt-get install dpkg-dev cmake g++ gcc binutils libx11-dev \ 
+    libxpm-dev libxft-dev libxext-dev python libssl-dev -y
+#ROOT other packages
+RUN apt-get install gfortran libpcre3-dev \
+    xlibmesa-glu-dev libglew1.5-dev libftgl-dev \
+    libmysqlclient-dev libfftw3-dev libcfitsio-dev \
+    graphviz-dev libavahi-compat-libdnssd-dev \
+    libldap2-dev python-dev libxml2-dev libkrb5-dev \
+    libgsl0-dev -y
+
 USER ${NB_USER}
+
+#ROOT installation
+ARG ROOT_VERSION="6.24.02"
+RUN cd ${HOME} && \
+    wget https://root.cern/download/root_v${ROOT_VERSION}.Linux-ubuntu20-x86_64-gcc9.3.tar.gz && \
+    tar -xzvf root_v${ROOT_VERSION}.Linux-ubuntu20-x86_64-gcc9.3.tar.gz && \
+    rm -rf root_v${ROOT_VERSION}.Linux-ubuntu20-x86_64-gcc9.3.tar.gz && \
+    echo "source ${HOME}/root/bin/thisroot.sh" >> ~/.bashrc
 #all pip install packages
 
+RUN pip3 install --no-cache --upgrade pip && \
+    pip install --no-cache notebook jupyterlab && \
+    pip install numpy matplotlib && \
+    pip install --no-cache-dir jupyterhub
 
-RUN pip install numpy matplotlib
+WORKDIR ${HOME}
+#RUN bash
+#ENTRYPOINT ["bash","-l"]
