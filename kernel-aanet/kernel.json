@@ -1,0 +1,20 @@
+{
+    "argv": [
+     "python",
+     "-m",
+     "ipykernel_launcher",
+     "-f",
+     "{connection_file}"
+    ],
+    "display_name": "kernel-aanet (ipykernel)",
+    "language": "python",
+    "metadata": {
+     "debugger": true
+    },
+    "env": {
+        "HOME":"/home/your_user",
+        "ROOTSYS":"${HOME}/root",
+        "PATH":"${PATH}:${HOME}/root/bin",
+        "PYTHONPATH":"${HOME}/root/lib"
+    }
+}

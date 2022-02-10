@@ -2,7 +2,6 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-#SHELL [ "/bin/bash","-c" ]
 #set bash as a default shell
 ENV SHELL /bin/bash
 RUN apt-get update -y && \
@@ -21,13 +20,11 @@ RUN adduser --disabled-password \
     ${NB_USER}
 
 #maybe copy is not necessary
-COPY . ${HOME}
+#COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 ENV PATH=$PATH:${HOME}/.local/bin
 
-#RUN pip3 install --no-cache --upgrade pip && \
-#    pip install --no-cache notebook jupyterlab
 
 #ROOT required packages
 RUN apt-get install dpkg-dev cmake g++ gcc binutils libx11-dev \ 
@@ -39,6 +36,8 @@ RUN apt-get install gfortran libpcre3-dev \
     graphviz-dev libavahi-compat-libdnssd-dev \
     libldap2-dev python-dev libxml2-dev libkrb5-dev \
     libgsl0-dev -y
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 10
 
 USER ${NB_USER}
 
@@ -54,8 +53,11 @@ RUN cd ${HOME} && \
 RUN pip3 install --no-cache --upgrade pip && \
     pip install --no-cache notebook jupyterlab && \
     pip install numpy matplotlib && \
-    pip install --no-cache-dir jupyterhub
-
+    pip install --no-cache-dir jupyterhub && \
+    pip install jupyter metakernel pyroot jupyter-fortran-kernel ipykernel
+#copy of aanet kernel
+COPY kernel-aanet/ ${HOME}/.local/share/jupyter/kernels/kernel-aanet
+#USER root
+#RUN chown -Rh ${NB_UID} ${HOME}/.local/share/jupyter/kernels/kernel-aanet
+#USER ${NB_USER}
 WORKDIR ${HOME}
-#RUN bash
-#ENTRYPOINT ["bash","-l"]
